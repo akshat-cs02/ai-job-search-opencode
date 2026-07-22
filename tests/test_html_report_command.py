@@ -17,7 +17,7 @@ except ImportError:
     _HAVE_YAML = False
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-COMMAND_FILE = REPO_ROOT / ".claude" / "commands" / "html-report.md"
+COMMAND_FILE = REPO_ROOT / ".opencode" / "commands" / "html-report.md"
 LINT_SCRIPT = REPO_ROOT / "tools" / "lint_skills.py"
 GITIGNORE = REPO_ROOT / ".gitignore"
 
@@ -28,13 +28,11 @@ class HtmlReportCommandFileTests(unittest.TestCase):
     def test_command_file_exists(self):
         self.assertTrue(COMMAND_FILE.exists(), f"{COMMAND_FILE} not found")
 
-    def test_command_file_starts_with_correct_header(self):
-        """lint_skills.py rejects command files that don't start with '# /<name>'."""
+    def test_command_file_starts_with_frontmatter(self):
         text = COMMAND_FILE.read_text(encoding="utf-8")
-        first_line = text.lstrip().splitlines()[0]
         self.assertTrue(
-            first_line.startswith("# /html-report"),
-            f"Command file must start with '# /html-report', got: {first_line!r}",
+            text.startswith("---\n"),
+            f"Command file must start with YAML frontmatter, got: {text[:50]!r}",
         )
 
     def test_command_file_is_non_empty(self):

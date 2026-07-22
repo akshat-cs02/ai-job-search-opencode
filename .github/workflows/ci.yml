@@ -1,7 +1,7 @@
 # CI for the framework itself: LaTeX smoke compiles, skill/command lint,
 # CLI typechecks, and (upstream only) placeholder integrity.
 #
-# Fork-friendly by design: forks personalize CLAUDE.md, the skill files, and
+# Fork-friendly by design: forks personalize the skill files and
 # cv/main_example.tex via /setup, so the placeholder-integrity job and the
 # exact page-count/content assertions run only on the upstream template repo.
 # Compile success, lint correctness, and an extractable PDF text layer are
@@ -13,9 +13,9 @@
 # CI runs typechecks and the checked-in fixture/mock test suites only; live
 # portal testing stays a local, on-demand step.
 #
-# Security posture: this template ships pre-approved Claude Code permissions
+# Security posture: this template ships pre-approved opencode permissions
 # and CLI code that every fork user executes, so the security-guards job
-# fails PRs that widen settings.json permissions, weaken the personal-data
+# fails PRs that widen opencode.json permissions, weaken the personal-data
 # gitignore rules, or add package lifecycle scripts; dependency-review flags
 # newly introduced vulnerable/malicious dependencies. Honest limit: a PR can
 # edit this workflow itself, so these guards catch accidents and casual
@@ -48,7 +48,7 @@ jobs:
       - run: pip install pyyaml
       - run: python tools/lint_skills.py
       - name: Framework version guard (upstream template only)
-        if: github.repository == 'MadsLorentzen/ai-job-search'
+        if: github.repository == 'akshat-cs02/ai-job-search-opencode'
         run: python tools/check_framework_version.py
 
   security-guards:
@@ -79,7 +79,7 @@ jobs:
     # passes instead of hard-failing (the same graceful-skip pattern the
     # workflow uses for optional tools). Enabling Dependency graph under
     # Settings -> Advanced Security activates the real check.
-    if: github.event_name == 'pull_request' && github.repository == 'MadsLorentzen/ai-job-search'
+    if: github.event_name == 'pull_request' && github.repository == 'akshat-cs02/ai-job-search-opencode'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
@@ -139,7 +139,7 @@ jobs:
           python3 tools/verify_pdf.py cv/main_example.pdf --min-chars 100
           python3 tools/verify_pdf.py cover_letters/cover_example.pdf --min-chars 100
       - name: Assert stock PDF structure (upstream template only)
-        if: github.repository == 'MadsLorentzen/ai-job-search'
+    if: github.repository == 'akshat-cs02/ai-job-search-opencode'
         run: |
           python3 tools/verify_pdf.py cv/main_example.pdf \
             --pages 2 \
@@ -194,9 +194,9 @@ jobs:
               fail=1
             fi
           }
-          check CLAUDE.md '\[YOUR_NAME\]'
+          check AGENTS.md '\[YOUR_NAME\]'
           check cv/main_example.tex '\[YOUR_NAME\]'
           check cover_letters/cover_example.tex '\[YOUR NAME\]'
-          check .claude/skills/job-application-assistant/01-candidate-profile.md '<!-- SETUP'
-          check .claude/skills/job-application-assistant/04-job-evaluation.md '\[YOUR_PRIMARY_SKILLS\]'
+          check .opencode/skills/job-application-assistant/01-candidate-profile.md '<!-- SETUP'
+          check .opencode/skills/job-application-assistant/04-job-evaluation.md '\[YOUR_PRIMARY_SKILLS\]'
           exit $fail

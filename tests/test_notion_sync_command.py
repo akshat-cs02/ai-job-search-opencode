@@ -18,17 +18,17 @@ except ImportError:
     _HAVE_YAML = False
 
 REPO = Path(__file__).resolve().parent.parent
-COMMAND = REPO / ".claude" / "commands" / "notion-sync.md"
+COMMAND = REPO / ".opencode" / "commands" / "notion-sync.md"
 GITIGNORE = REPO / ".gitignore"
 
 
 class NotionSyncCommandSpec(unittest.TestCase):
-    def test_command_file_exists_with_lint_compliant_header(self):
+    def test_command_file_exists_with_lint_compliant_frontmatter(self):
         self.assertTrue(COMMAND.is_file(), "command spec missing")
-        first_line = COMMAND.read_text(encoding="utf-8").splitlines()[0]
+        text = COMMAND.read_text(encoding="utf-8")
         self.assertTrue(
-            first_line.startswith("# /notion-sync"),
-            f"header must start with '# /notion-sync' (lint_skills.py enforces it), got: {first_line!r}",
+            text.startswith("---\n"),
+            f"command file must start with YAML frontmatter, got: {text[:50]!r}",
         )
 
     def test_command_file_is_substantive(self):

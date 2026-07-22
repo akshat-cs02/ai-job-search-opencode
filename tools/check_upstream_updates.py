@@ -21,14 +21,16 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 FRAMEWORK_FILES = [
-    ".claude/skills/job-application-assistant/01-candidate-profile.md",
-    ".claude/skills/job-application-assistant/02-behavioral-profile.md",
-    ".claude/skills/job-application-assistant/03-writing-style.md",
-    ".claude/skills/job-application-assistant/04-job-evaluation.md",
-    ".claude/skills/job-application-assistant/05-cv-templates.md",
-    ".claude/skills/job-application-assistant/06-cover-letter-templates.md",
-    ".claude/skills/job-application-assistant/07-interview-prep.md",
-    ".claude/skills/job-application-assistant/SKILL.md",
+    ".opencode/skills/job-application-assistant/01-candidate-profile.md",
+    ".opencode/skills/job-application-assistant/02-behavioral-profile.md",
+    ".opencode/skills/job-application-assistant/03-writing-style.md",
+    ".opencode/skills/job-application-assistant/04-job-evaluation.md",
+    ".opencode/skills/job-application-assistant/05-cv-templates.md",
+    ".opencode/skills/job-application-assistant/06-cover-letter-templates.md",
+    ".opencode/skills/job-application-assistant/07-interview-prep.md",
+    ".opencode/skills/job-application-assistant/SKILL.md",
+    ".opencode/skills/job-scraper/SKILL.md",
+    ".opencode/skills/upskill/SKILL.md",
     "AGENTS.md",
 ]
 

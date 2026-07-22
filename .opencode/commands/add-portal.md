@@ -1,5 +1,5 @@
 ---
-description: Generate a job-portal search skill for a job board in your market. Country-agnostic: works for any portal in any language.
+description: "Generate a job-portal search skill for a job board in your market. Country-agnostic: works for any portal in any language."
 ---
 
 You are helping the user build a job-portal search skill. `$ARGUMENTS` may contain a subcommand, a portal URL, or nothing.

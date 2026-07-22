@@ -30,78 +30,49 @@ class LinterRepoFixture(unittest.TestCase):
         # The Python-test CI job does not install PyYAML; the separate lint job
         # does. These settings-focused tests only need a valid frontmatter map.
         (tools / "yaml.py").write_text(
-            "class YAMLError(Exception):\n"
-            "    pass\n\n"
-            "def safe_load(_text):\n"
-            "    return {'name': 'example', 'description': 'Example skill'}\n",
+            "class YAMLError(Exception): pass\n\n"
+            "def safe_load(text):\n"
+            "    result = {}\n"
+            "    for line in text.splitlines():\n"
+            "        if ':' in line:\n"
+            "            k, _, v = line.partition(':')\n"
+            "            result[k.strip()] = v.strip()\n"
+            "    return result if result else None\n",
             encoding="utf-8",
         )
 
-        command = self.root / ".claude" / "commands" / "setup.md"
+        command = self.root / ".opencode" / "commands" / "setup.md"
         command.parent.mkdir(parents=True)
-        command.write_text("# /setup - Test setup command\n", encoding="utf-8")
+        command.write_text("---\ndescription: Test command\n---\n\n# Content\n", encoding="utf-8")
 
-        skill = self.root / ".claude" / "skills" / "example" / "SKILL.md"
+        skill = self.root / ".opencode" / "skills" / "example" / "SKILL.md"
         skill.parent.mkdir(parents=True)
         skill.write_text(
             "---\nname: example\ndescription: Example skill\n---\n",
             encoding="utf-8",
         )
 
-        self.settings = self.root / ".claude" / "settings.json"
-        self.write_settings({"permissions": {"allow": []}})
 
-    def write_settings(self, data):
-        self.settings.write_text(json.dumps(data), encoding="utf-8")
-
-
-class SettingsShapeTests(LinterRepoFixture):
-    def test_valid_settings_pass(self):
+class BasicLintTests(LinterRepoFixture):
+    def test_valid_tree_passes(self):
         result = run_linter(self.root)
 
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("lint_skills: OK", result.stdout)
 
-    def test_invalid_json_fails_cleanly(self):
-        self.settings.write_text("{not json", encoding="utf-8")
-
+    def test_missing_description_in_command_fails(self):
+        command = self.root / ".opencode" / "commands" / "bad.md"
+        command.write_text("---\nname: test\n---\n\nNo description\n", encoding="utf-8")
         result = run_linter(self.root)
-
         self.assertEqual(result.returncode, 1)
-        self.assertIn(".claude/settings.json", result.stdout)
-        self.assertNotIn("Traceback", result.stderr)
+        self.assertIn("missing required key 'description'", result.stdout)
 
-    def test_non_object_root_fails_cleanly(self):
-        for data in ([], "settings", 1, None):
-            with self.subTest(data=data):
-                self.write_settings(data)
-
-                result = run_linter(self.root)
-
-                self.assertEqual(result.returncode, 1)
-                self.assertIn("top-level JSON value to be an object", result.stdout)
-                self.assertNotIn("Traceback", result.stderr)
-
-    def test_non_object_permissions_fails_cleanly(self):
-        for permissions in ([], "permissions", 1, None):
-            with self.subTest(permissions=permissions):
-                self.write_settings({"permissions": permissions})
-
-                result = run_linter(self.root)
-
-                self.assertEqual(result.returncode, 1)
-                self.assertIn("expected permissions to be an object", result.stdout)
-                self.assertNotIn("Traceback", result.stderr)
-
-    def test_non_list_allow_fails_cleanly(self):
-        for allow in ({}, "Bash(bun run:*)", 1, None):
-            with self.subTest(allow=allow):
-                self.write_settings({"permissions": {"allow": allow}})
-
-                result = run_linter(self.root)
-
-                self.assertEqual(result.returncode, 1)
-                self.assertIn("expected permissions.allow to be a list", result.stdout)
-                self.assertNotIn("Traceback", result.stderr)
+    def test_missing_frontmatter_in_skill_fails(self):
+        skill = self.root / ".opencode" / "skills" / "noskill" / "SKILL.md"
+        skill.parent.mkdir(parents=True)
+        skill.write_text("No frontmatter here\n", encoding="utf-8")
+        result = run_linter(self.root)
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("missing YAML frontmatter", result.stdout)
 if __name__ == "__main__":
     unittest.main()

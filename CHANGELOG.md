@@ -13,7 +13,17 @@ per-file diff commands.
 
 ## [Unreleased]
 
-_Changes landed on `master` since the last release will be listed here._
+### Opencode port (fork)
+
+This is a community fork porting the framework from Claude Code to [opencode](https://opencode.ai).
+
+**Changes from upstream:**
+- `.claude/commands/` → `.opencode/commands/` (with opencode YAML frontmatter)
+- `.claude/skills/` → `.opencode/skills/` (with opencode-compatible SKILL.md)
+- `.claude/settings.json` → `opencode.json` (opencode config format)
+- `CLAUDE.md` → `AGENTS.md` (opencode agent entrypoint)
+- All Python tools and tests updated for opencode paths
+- CI workflow updated for this fork's repository
 
 ## [1.0.0] - 2026-07-22
 

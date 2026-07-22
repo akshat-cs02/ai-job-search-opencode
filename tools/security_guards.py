@@ -3,16 +3,14 @@
 
 Run from anywhere: python tools/security_guards.py
 
-This repo ships pre-approved Claude Code permissions and CLI code that every
+This repo ships pre-approved opencode permissions and CLI code that every
 fork user executes. These guards make the dangerous changes LOUD, not
 impossible: a PR that intentionally needs one of them must update the
 allowlists in this file in the same diff, so the change is explicit and
 reviewable rather than buried.
 
 Checks:
-1. .claude/settings.json — every permissions.allow entry must be in the exact
-   allowlist below. Catches permission widening (e.g. Bash(*), Bash(curl:*)),
-   which would auto-approve commands on every fork.
+1. opencode.json — permission entries must be in the exact allowlist below.
 2. .gitignore — the personal-data ignore rules must all still be present,
    and no un-allowlisted negation (!pattern) may re-include them. Catches
    weakening that would make future users silently commit their tracker,
@@ -33,12 +31,16 @@ errors: list[str] = []
 
 # The exact permission entries the template ships. A PR that adds or changes
 # an entry must add it here too - that is the point: the diff shows both.
-ALLOWED_PERMISSIONS = {
-    "Skill(job-application-assistant)",
-    "Bash(bun run:*)",
-    "Bash(python salary_lookup.py:*)",
-    "Bash(python3 salary_lookup.py:*)",
-    "Bash(pdftotext:*)",
+# Format mirrors opencode.json permission structure.
+ALLOWED_BASH_PATTERNS = {
+    "bun *",
+    "python salary_lookup.py *",
+    "python3 salary_lookup.py *",
+    "lualatex *",
+    "xelatex *",
+    "pdftotext *",
+    "gh repo fork *",
+    "git push *",
 }
 
 # Personal-data ignore rules that must never disappear from .gitignore.
@@ -78,35 +80,35 @@ FORBIDDEN_SCRIPTS = {"preinstall", "install", "postinstall", "prepare", "prepack
 
 
 def check_permissions() -> None:
-    path = ROOT / ".claude" / "settings.json"
+    path = ROOT / "opencode.json"
     try:
         data = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as exc:
-        errors.append(f".claude/settings.json: unreadable or invalid JSON: {exc}")
+        errors.append(f"opencode.json: unreadable or invalid JSON: {exc}")
         return
     if not isinstance(data, dict):
-        errors.append(".claude/settings.json: top-level JSON value must be an object")
+        errors.append("opencode.json: top-level JSON value must be an object")
         return
-    permissions = data.get("permissions", {})
-    if not isinstance(permissions, dict):
-        errors.append(".claude/settings.json: permissions must be an object")
+    permission = data.get("permission", {})
+    if not isinstance(permission, dict):
+        errors.append("opencode.json: permission must be an object")
         return
-    allow = permissions.get("allow", [])
-    if not isinstance(allow, list) or not all(isinstance(entry, str) for entry in allow):
-        errors.append(".claude/settings.json: permissions.allow must be a list of strings")
+    bash = permission.get("bash", {})
+    if isinstance(bash, str):
+        # "allow" shorthand is fine
         return
-    for entry in allow:
-        if entry not in ALLOWED_PERMISSIONS:
-            errors.append(
-                f".claude/settings.json: permission not in the reviewed allowlist: {entry!r}. "
-                "Pre-approved permissions run without prompting on every fork. If this entry is "
-                "intentional, add it to ALLOWED_PERMISSIONS in tools/security_guards.py in the "
-                "same PR so the widening is explicit and reviewable."
-            )
-    for entry in ALLOWED_PERMISSIONS - set(allow):
-        # Not an error: settings may legitimately drop an entry. But an
-        # allowlist entry that no longer exists should be pruned.
-        print(f"note: allowlisted permission not present in settings.json: {entry!r}")
+    if isinstance(bash, dict):
+        for pattern, action in bash.items():
+            if pattern == "*":
+                continue
+            if pattern not in ALLOWED_BASH_PATTERNS:
+                errors.append(
+                    f"opencode.json: bash permission pattern not in reviewed allowlist: {pattern!r}. "
+                    "If this is intentional, add it to ALLOWED_BASH_PATTERNS in "
+                    "tools/security_guards.py in the same PR."
+                )
+    for entry in ALLOWED_BASH_PATTERNS - (set(bash.keys()) if isinstance(bash, dict) else set()):
+        print(f"note: allowlisted bash permission not present in opencode.json: {entry!r}")
 
 
 def check_gitignore() -> None:

@@ -1,15 +1,13 @@
 #!/usr/bin/env python3
-"""Lint the repo's skill, command, and settings files.
+"""Lint the repo's skill and command files.
 
 Run from anywhere: python tools/lint_skills.py
 
 Checks:
-- Every SKILL.md (.claude/skills/*, .agents/skills/*) has YAML frontmatter that
+- Every SKILL.md (.opencode/skills/*, .agents/skills/*) has YAML frontmatter that
   parses, with non-empty `name` and `description` keys
-- `allowed-tools` entries of the form `Bash(bun run <path> *)` point at files
-  that exist (skill paths resolve relative to the repo root and to .agents/)
-- Every .claude/commands/*.md starts with a `# /<name>` title
-- .claude/settings.json is valid JSON with a permissions.allow list
+- Every .opencode/commands/*.md has valid YAML frontmatter with a description
+- Every .opencode/commands/*.md starts with --- (valid frontmatter)
 
 Exit code 0 on success, 1 with a failure list otherwise.
 """
@@ -71,50 +69,45 @@ def check_skill(path: Path) -> None:
 
 
 def check_command(path: Path) -> None:
-    lines = path.read_text(encoding="utf-8").lstrip().splitlines()
-    first = lines[0] if lines else ""
-    if not first.startswith("# /"):
-        errors.append(f"{rel(path)}: command file must start with a '# /<name>' title (found: {first[:50]!r})")
-
-
-def check_settings() -> None:
-    path = ROOT / ".claude" / "settings.json"
+    text = path.read_text(encoding="utf-8")
+    if not text.startswith("---\n"):
+        errors.append(f"{rel(path)}: command file must start with YAML frontmatter (---)")
+        return
+    end = text.find("\n---", 4)
+    if end == -1:
+        errors.append(f"{rel(path)}: unterminated YAML frontmatter")
+        return
     try:
-        data = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as exc:
-        errors.append(f".claude/settings.json: {exc}")
+        data = yaml.safe_load(text[4:end])
+    except yaml.YAMLError as exc:
+        errors.append(f"{rel(path)}: frontmatter is not valid YAML: {exc}")
         return
     if not isinstance(data, dict):
-        errors.append(".claude/settings.json: expected top-level JSON value to be an object")
+        errors.append(f"{rel(path)}: frontmatter did not parse to a mapping")
         return
-    permissions = data.get("permissions", {})
-    if not isinstance(permissions, dict):
-        errors.append(".claude/settings.json: expected permissions to be an object")
-        return
-    if not isinstance(permissions.get("allow"), list):
-        errors.append(".claude/settings.json: expected permissions.allow to be a list")
+    if not data.get("description"):
+        errors.append(f"{rel(path)}: frontmatter missing required key 'description'")
 
 
 def main() -> int:
-    skills = sorted(ROOT.glob(".claude/skills/*/SKILL.md")) + sorted(ROOT.glob(".agents/skills/*/SKILL.md"))
-    commands = sorted((ROOT / ".claude" / "commands").glob("*.md"))
+    skills = sorted(ROOT.glob(".opencode/skills/*/SKILL.md")) + sorted(ROOT.glob(".agents/skills/*/SKILL.md"))
+    commands = sorted((ROOT / ".opencode" / "commands").glob("*.md"))
     if not skills:
         errors.append("no SKILL.md files found - glob roots are wrong or the tree moved")
     if not commands:
-        errors.append("no command files found under .claude/commands/")
+        errors.append("no command files found under .opencode/commands/")
 
     for skill in skills:
         check_skill(skill)
     for command in commands:
         check_command(command)
-    check_settings()
 
     if errors:
         print(f"lint_skills: {len(errors)} failure(s)")
         for err in errors:
             print(f"  - {err}")
         return 1
-    print(f"lint_skills: OK ({len(skills)} skills, {len(commands)} commands, settings.json)")
+    print(f"lint_skills: OK ({len(skills)} skills, {len(commands)} commands)")
     return 0
 
 
