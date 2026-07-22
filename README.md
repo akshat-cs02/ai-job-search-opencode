@@ -37,7 +37,7 @@ The portal CLI tools (`.agents/skills/`), LaTeX templates (`cv/`, `cover_letters
 ### 1. Clone
 
 ```bash
-git clone <your-fork-url>
+git clone https://github.com/akshat-cs02/ai-job-search-opencode.git
 cd ai-job-search-opencode
 ```
 

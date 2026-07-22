@@ -4,15 +4,15 @@ Step-by-step instructions for getting the AI Job Search framework running.
 
 ## 1. Prerequisites
 
-### Claude Code
+### Opencode
 
-Install Claude Code (Anthropic's CLI for Claude):
+Install [opencode](https://opencode.ai) — the open-source AI coding assistant:
 
 ```bash
-npm install -g @anthropic-ai/claude-code
+npm install -g @opencode-ai/cli
 ```
 
-You'll need an Anthropic API key or a Claude Pro/Team subscription. See the [Claude Code docs](https://docs.anthropic.com/en/docs/claude-code) for details.
+You'll need an API key for a supported model (Anthropic, OpenAI, etc.). See the [opencode docs](https://opencode.ai) for details.
 
 ### Python
 
@@ -187,10 +187,10 @@ If you're outside Denmark, you can generate an equivalent search skill for your 
 
 ## 4. Run the setup interview
 
-Start Claude Code in the repository:
+Start opencode in the repository:
 
 ```bash
-claude
+opencode
 ```
 
 Then run the onboarding:
@@ -199,7 +199,7 @@ Then run the onboarding:
 /setup
 ```
 
-Claude will offer three paths:
+The agent will offer three paths:
 
 - **Path A (documents folder):** Add your CV, LinkedIn export, diplomas, references, or past applications under `documents/`. Claude reads and cross-references them before proposing profile updates. This is best when you have several source files.
 - **Path B (single CV import):** Share one CV/resume by mentioning the file with `@` or pasting the text. Claude extracts it and asks follow-up questions for anything missing.
@@ -211,7 +211,7 @@ All three paths produce the same result: fully populated profile files.
 
 | File | Content |
 |------|---------|
-| `CLAUDE.md` | Your full candidate profile |
+| `AGENTS.md` | Your full candidate profile |
 | `01-candidate-profile.md` | Structured education, experience, skills |
 | `02-behavioral-profile.md` | Behavioral assessment |
 | `04-job-evaluation.md` | Personalized skill match areas and career goals |
@@ -314,10 +314,6 @@ Make sure Bun is installed and you ran `bun install` in each CLI directory. The 
 
 ### Fonts not found in cover letter
 The cover letter template expects fonts in `cover_letters/OpenFonts/fonts/`. Make sure this directory exists and contains the Lato and Raleway font files.
+### Stale permissions cache
 
-### Stale `.claude/settings.local.json` from an older clone
-Shared Claude Code permissions now live in `.claude/settings.json` (scoped to `bun run`, `python salary_lookup.py`, and `python3 salary_lookup.py`). Earlier versions of this repo committed a broader `.claude/settings.local.json` that pre-approved `Bash(curl:*)`, `Bash(python:*)` and `Bash(bun:*)`. If you cloned before that change, git leaves the old file behind in your working copy, and its permissions still apply on top of `settings.json`. Delete it (or trim it to your own personal overrides):
-
-```bash
-rm .claude/settings.local.json
-```
+If you had a previous version of this repo cloned, old config files may linger. Check for and remove any stale `.opencode/` or `.claude/` cache files that could interfere.
