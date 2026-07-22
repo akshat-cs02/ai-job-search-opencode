@@ -1,0 +1,49 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "username": "ai-job-seeker",
+  "instructions": ["AGENTS.md", ".opencode/skills/job-application-assistant/01-candidate-profile.md", ".opencode/skills/job-application-assistant/02-behavioral-profile.md", ".opencode/skills/job-application-assistant/03-writing-style.md", ".opencode/skills/job-application-assistant/04-job-evaluation.md", ".opencode/skills/job-application-assistant/05-cv-templates.md", ".opencode/skills/job-application-assistant/06-cover-letter-templates.md", ".opencode/skills/job-application-assistant/07-interview-prep.md"],
+
+  "command": {
+    "setup": { "description": "Onboard your profile into the AI job search framework. Reads documents/ folder, imports a CV, or walks through an interview to build your candidate profile." },
+    "apply": { "description": "Run the full drafter-reviewer application pipeline on a job posting URL or pasted text. Evaluates fit, tailors CV + cover letter, compiles PDFs, and ATS-verifies." },
+    "scrape": { "description": "Search multiple job portals for positions matching your profile, deduplicate results, and present them sorted by fit score." },
+    "expand": { "description": "Enrich your profile by scanning public sources (GitHub, portfolio, diplomas) for undiscovered competencies." },
+    "add-template": { "description": "Register your own LaTeX CV or cover letter template in place of the stock ones." },
+    "add-portal": { "description": "Generate a job-portal search skill for a job board in your market." },
+    "rank": { "description": "Batch-score all newly scraped postings against the fit framework and return a ranked shortlist." },
+    "outcome": { "description": "Record application results - interview stages, offers, rejections - and archive submitted materials." },
+    "interview": { "description": "Build stage-specific interview prep pack with company research, likely questions, and STAR answer mapping." },
+    "html-report": { "description": "Generate a self-contained HTML dashboard from your job search tracker and application archives." },
+    "notion-sync": { "description": "Publish a one-way, read-only view of your job pipeline into a Notion database." },
+    "reset": { "description": "Wipe profile data and/or documents folder to start fresh." }
+  },
+
+  "agent": {
+    "job-application-assistant": {
+      "description": "Career advisor and application assistant. Helps evaluate job postings, tailor CVs, write cover letters, and prep interviews.",
+      "mode": "primary",
+      "model": "anthropic/claude-sonnet-4-6"
+    }
+  },
+
+  "permission": {
+    "edit": "allow",
+    "bash": {
+      "bun *": "allow",
+      "python salary_lookup.py *": "allow",
+      "python3 salary_lookup.py *": "allow",
+      "lualatex *": "allow",
+      "xelatex *": "allow",
+      "pdftotext *": "allow",
+      "gh repo fork *": "ask",
+      "git push *": "ask",
+      "*": "ask"
+    },
+    "webfetch": "allow",
+    "websearch": "allow",
+    "glob": "allow",
+    "grep": "allow",
+    "read": "allow",
+    "task": "allow"
+  }
+}
