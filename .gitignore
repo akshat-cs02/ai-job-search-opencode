@@ -34,6 +34,7 @@ linkedin_Profile.pdf
 *.jpeg
 *.png
 !cover_letters/OpenFonts/fonts/**
+!screenshots/*.png
 
 # OS files
 .DS_Store
