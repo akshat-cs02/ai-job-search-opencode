@@ -24,6 +24,20 @@ This is a community port of [MadsLorentzen/ai-job-search](https://github.com/Mad
 
 The portal CLI tools (`.agents/skills/`), LaTeX templates (`cv/`, `cover_letters/`), Python tools (`tools/`), and all other assets are **unchanged** from the original.
 
+## Why opencode?
+
+The original runs on **Claude Code**, which requires a paid Claude subscription (or API credits). This port runs on **opencode** — a free, open-source AI coding agent:
+
+| | Claude Code (original) | opencode (this port) |
+|---|---|---|
+| **Cost** | Paid (Claude Pro/Max or API credits) | **Free, open source (MIT)** |
+| **Model choice** | Claude models only | Claude, GPT, Gemini, DeepSeek, Groq, Llama, local models via Ollama, etc. |
+| **Code** | Closed source | Open source, community-driven |
+| **Install** | Node/native installer, subscription required | Single binary / npm, no account needed |
+| **CLI** | Slash commands | Slash commands (`/setup`, `/apply`, …) |
+
+You get the **same job-search workflow** (profile setup, scraping, ranking, tailored CVs & cover letters, interview prep, application tracking) without paying for an agent subscription — bring your own free model (e.g. DeepSeek) and run the whole thing locally.
+
 ## Prerequisites
 
 - [opencode](https://opencode.ai) (CLI)
@@ -31,6 +45,38 @@ The portal CLI tools (`.agents/skills/`), LaTeX templates (`cv/`, `cover_letters
 - [Bun](https://bun.sh) (for job search CLI tools)
 - LaTeX distribution with `lualatex` and `xelatex`: [MiKTeX](https://miktex.org/) (Windows), [TeX Live](https://tug.org/texlive/), [MacTeX](https://tug.org/mactex/)
 - Optional: `pdftotext` from [poppler](https://poppler.freedesktop.org/) for ATS verification
+
+## Install opencode
+
+opencode runs on macOS, Linux, and Windows. Pick one:
+
+```bash
+# macOS
+brew install anomalyco/opencode/opencode
+
+# Linux/macOS (curl)
+curl -fsSL https://opencode.ai/install | bash
+
+# Windows (PowerShell)
+powershell -c "irm https://opencode.ai/install.ps1 | iex"
+
+# Or via npm (all platforms)
+npm install -g opencode-ai
+```
+
+Verify it works:
+
+```bash
+opencode --version
+```
+
+Configure a free model provider if you don't have one yet — see the
+[opencode providers docs](https://opencode.ai/docs/providers/) (e.g. DeepSeek
+for a free option). Then open it:
+
+```bash
+opencode
+```
 
 ## Quick start
 
@@ -74,26 +120,17 @@ opencode
 
 ## Live demo
 
-See [`docs/DEMO.md`](docs/DEMO.md) for real, unmodified terminal output from the search and detail CLIs, plus an overview of the end-to-end workflow (`/setup` → `/scrape` → `/rank` → `/apply` → `/outcome` → `/html-report`).
+Real screenshots from the job-search CLI (no mockups):
 
-```
-$ bun run src/cli.ts search -q "full stack" --region global --limit 3 --format plain
+<p align="center">
+  <img src="screenshots/search-results.png" alt="Search results" width="80%">
+</p>
 
-Full-Stack Engineer @ CueBox, Performing Arts Software Startup
-  CueBox · Remote · 2026-07-31
-  slug: full-stack-engineer-cuebox-performing-arts-software-startup-cuebox-epvgrss3
-  https://job-boards.greenhouse.io/applytocuebox/jobs/6132218004?utm_source=freehire.me
+<p align="center">
+  <img src="screenshots/job-detail.png" alt="Job details" width="80%">
+</p>
 
-Full Stack Python Developer
-  MaybeWorks · — · 2026-07-31
-  slug: full-stack-python-developer-maybeworks-xriu7whz
-  https://djinni.co/jobs/592719-full-stack-python-developer/?utm_source=freehire.me
-
-Full Stack Software Engineer
-  New Era Technology · Remote · 2026-07-31
-  slug: full-stack-software-engineer-new-era-technology-5vvuf7fy
-  https://job-boards.greenhouse.io/neweratech/jobs/8661000002?utm_source=freehire.me
-```
+For the full walkthrough (search → detail → workflow overview) see [`docs/DEMO.md`](docs/DEMO.md).
 
 ## Commands
 
