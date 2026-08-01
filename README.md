@@ -72,6 +72,29 @@ opencode
 /apply https://jobindex.dk/job/1234567
 ```
 
+## Live demo
+
+See [`docs/DEMO.md`](docs/DEMO.md) for real, unmodified terminal output from the search and detail CLIs, plus an overview of the end-to-end workflow (`/setup` → `/scrape` → `/rank` → `/apply` → `/outcome` → `/html-report`).
+
+```
+$ bun run src/cli.ts search -q "full stack" --region global --limit 3 --format plain
+
+Full-Stack Engineer @ CueBox, Performing Arts Software Startup
+  CueBox · Remote · 2026-07-31
+  slug: full-stack-engineer-cuebox-performing-arts-software-startup-cuebox-epvgrss3
+  https://job-boards.greenhouse.io/applytocuebox/jobs/6132218004?utm_source=freehire.me
+
+Full Stack Python Developer
+  MaybeWorks · — · 2026-07-31
+  slug: full-stack-python-developer-maybeworks-xriu7whz
+  https://djinni.co/jobs/592719-full-stack-python-developer/?utm_source=freehire.me
+
+Full Stack Software Engineer
+  New Era Technology · Remote · 2026-07-31
+  slug: full-stack-software-engineer-new-era-technology-5vvuf7fy
+  https://job-boards.greenhouse.io/neweratech/jobs/8661000002?utm_source=freehire.me
+```
+
 ## Commands
 
 - `/setup` — Onboard your profile
