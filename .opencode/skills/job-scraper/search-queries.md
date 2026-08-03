@@ -1,81 +1,40 @@
-# Search Queries for Job Scraper
+# Job Search Queries
 
-<!-- SETUP: Customize these queries based on your skills, target roles, and location -->
+## Query Categories (ordered by priority)
 
-## Installed portal CLIs (primary for `/scrape`)
+### 1. Full-Stack Web Development (primary)
+- LinkedIn: `"full stack developer" OR "full stack engineer" OR "web developer" "India" OR "remote" -senior -lead`
+- LinkedIn: `"software engineer" "React" OR "FastAPI" OR "Python" "entry level" OR "junior" OR "fresher"`
+- LinkedIn: `"backend developer" OR "API developer" Python OR JavaScript OR TypeScript`
 
-`/scrape` discovers every portal skill under `.agents/skills/*/SKILL.md` and runs its CLI first. Shipped country-agnostic CLIs include `linkedin-search` and `freehire-search`; Danish demos and any skill you add with `/add-portal` are included the same way. You do **not** need a matching `site:` line below for those CLIs to run.
+### 2. Data Analytics / BI (secondary)
+- LinkedIn: `"data analyst" OR "business intelligence" OR "data analyst intern" Python OR SQL OR "data visualization"`
+- LinkedIn: `"data analyst" "entry level" OR "junior" OR "fresher" OR "graduate"`
 
-The `site:` query templates in this file are the **WebSearch fallback** — for portals without a CLI, company career pages, or when a CLI fails.
+### 3. Graduate / Entry-Level Programs
+- LinkedIn: `"graduate trainee" OR "graduate engineer" OR "new graduate" OR "campus hire" OR "fresher" software`
+- LinkedIn: `"associate software engineer" OR "junior software developer" India OR remote`
 
-## Search Sites
+### 4. Python Developer Roles
+- LinkedIn: `"Python developer" OR "Python backend" FastAPI OR Django OR Flask entry level`
+- LinkedIn: `"Python developer" "fresher" OR "junior" OR "0-2 years"`
 
-Primary (your market's job boards - scaffold one with `/add-portal`):
-- **[YOUR_JOB_BOARD]** - your market's largest general job board
-- **linkedin.com/jobs** - LinkedIn job listings (filter: [YOUR_COUNTRY] / [YOUR_CITY]); also covered by `linkedin-search` CLI
-- **[YOUR_INDUSTRY_JOB_BOARD]** - a niche/industry board for your field (optional)
-- **[YOUR_ADDITIONAL_JOB_BOARD]** - another major board for your market (optional)
+### 5. ML / Data Science (adjacent)
+- LinkedIn: `"machine learning engineer" OR "data scientist" OR "ML engineer" entry level OR junior Python`
+- LinkedIn: `"AI engineer" OR "AI developer" entry level OR fresher`
 
-Secondary (company career pages via Google):
-- Direct Google searches with `site:` filters for known target companies
+### 6. Remote / Startup Roles (via remotive-search)
+- Remotive: `search -q "full stack developer" --category software-dev`
+- Remotive: `search -q "python" --category software-dev`
+- Remotive: `search -q "data analyst" --category data`
+- Remotive: `search -q "web developer"`
 
-## Query Categories
+## Geographic Focus
+- Primary: Bangalore, India
+- Secondary: Remote (global)
+- Tertiary: Other Indian tech hubs (Hyderabad, Pune, Mumbai, Delhi NCR)
 
-Queries are grouped by priority. Each query should be combined with your location terms (e.g. your city, region, or metro area) where the site supports it.
-
-### Priority 1: [YOUR_PRIMARY_ROLE_TYPE]
-
-These match your strongest and most desired career direction.
-
-```
-site:[YOUR_JOB_BOARD] "[YOUR_PRIMARY_JOB_TITLE]" [YOUR_CITY]
-site:[YOUR_JOB_BOARD] "[YOUR_KEY_SKILL]" [YOUR_CITY]
-site:linkedin.com/jobs "[YOUR_PRIMARY_JOB_TITLE]" [YOUR_COUNTRY]
-```
-
-### Priority 2: [YOUR_DOMAIN_EXPERTISE]
-
-These match your domain expertise.
-
-```
-site:[YOUR_JOB_BOARD] [YOUR_DOMAIN_KEYWORD_1] [YOUR_CITY] OR [YOUR_REGION]
-site:[YOUR_JOB_BOARD] [YOUR_DOMAIN_KEYWORD_2] [YOUR_COUNTRY]
-site:linkedin.com/jobs [YOUR_DOMAIN_KEYWORD_1] [YOUR_CITY] [YOUR_COUNTRY]
-```
-
-### Priority 3: [YOUR_ADJACENT_ROLE_TYPE]
-
-Adjacent roles you could pivot into.
-
-```
-site:[YOUR_JOB_BOARD] "[YOUR_ADJACENT_TITLE_1]" [YOUR_KEY_SKILL] [YOUR_CITY]
-site:[YOUR_JOB_BOARD] "[YOUR_ADJACENT_TITLE_2]" [YOUR_KEY_SKILL] [YOUR_CITY]
-```
-
-### Priority 4: Broader Technical / Consulting
-
-Wider net for general technical roles.
-
-```
-site:[YOUR_JOB_BOARD] [YOUR_KEY_SKILL] developer [YOUR_CITY]
-site:linkedin.com/jobs "[YOUR_KEY_SKILL] developer" [YOUR_CITY]
-site:[YOUR_JOB_BOARD] "technical consultant" [YOUR_DOMAIN] [YOUR_CITY]
-```
-
-## Location Filter
-
-When evaluating results, verify the job location is within reasonable commute distance from your home. Define acceptable areas:
-- [YOUR_CITY] and surrounding areas
-- [ACCEPTABLE_AREA_1]
-- [ACCEPTABLE_AREA_2]
-- [BORDERLINE_AREA] (borderline - ~X min by transit)
-- [TOO_FAR_AREA] (too far)
-
-## Date Filter
-
-Only include jobs posted within the last 14 days, or with an application deadline that has not yet passed. If a posting date cannot be determined, include it but flag as "date unknown".
-
-## Adapting Queries
-
-If the user specifies a focus area, select queries from the matching category and also generate 2-3 custom queries for that focus. For example:
-- "/scrape [focus_area]" -> relevant category queries + custom focus-specific queries
+## Exclusions
+- Senior/lead/principal level roles
+- Roles requiring 5+ years experience (unless skills match is exceptional)
+- Roles in countries where visa sponsorship is unlikely (US, UK, EU without explicit sponsorship mention)

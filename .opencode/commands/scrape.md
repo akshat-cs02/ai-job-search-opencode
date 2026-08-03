@@ -16,6 +16,7 @@ Follow these steps **in order**.
    - `jobbank-search`, `jobdanmark-search`, `jobindex-search`, `jobnet-search` (Denmark)
    - `linkedin-search` (country-agnostic)
    - `freehire-search` (country-agnostic, tech-focused)
+   - `remotive-search` (remote-first, startup-heavy)
 4. State the plan: how many portals, which queries, the dedup window.
 
 ---
